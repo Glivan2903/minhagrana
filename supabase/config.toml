@@ -1,0 +1,5 @@
+
+project_id = "oypuvyflernlqajkljbq"
+
+[functions.send-welcome]
+verify_jwt = false
