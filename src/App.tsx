@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import FutureTransactionsPage from "./pages/FutureTransactionsPage";
 import RelatoriosDetalhadosPage from "./pages/RelatoriosDetalhadosPage";
+import BloqueadoPage from '@/pages/BloqueadoPage';
 
 const queryClient = new QueryClient();
 
@@ -29,7 +30,9 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Redireciona raiz para login */}
+      {/* Página de bloqueio FORA do layout principal */}
+      <Route path="/bloqueado" element={<BloqueadoPage />} />
+      {/* Rotas protegidas dentro do sistema */}
       <Route path="/" element={user ? <MainLayout /> : <Navigate to="/login" /> }>
         <Route index element={<Navigate to="/dashboard" />} />
         <Route path="dashboard" element={<DashboardPage />} />

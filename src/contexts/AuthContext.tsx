@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type AuthContextType = {
   user: User | null;
@@ -20,6 +20,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [planoStatus, setPlanoStatus] = useState<string | null>(null);
+  const [vencimento, setVencimento] = useState<string | null>(null);
 
   useEffect(() => {
     // Verificar sessão atual
@@ -27,7 +30,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const { data } = await supabase.auth.getSession();
         setUser(data.session?.user || null);
-        
+        if (data.session?.user?.email) {
+          // Buscar status e vencimento sempre que autenticar
+          const { data: usuario } = await supabase
+            .from('usuarios')
+            .select('status, vencimento')
+            .eq('email', data.session.user.email)
+            .single();
+          if (usuario) {
+            setPlanoStatus(typeof usuario.status === 'string' ? usuario.status.trim().toLowerCase() : null);
+            setVencimento(usuario.vencimento || null);
+          }
+        }
         // Configurar listener para mudanças de autenticação
         const { data: authListener } = supabase.auth.onAuthStateChange(
           async (event, session) => {
@@ -35,7 +49,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setLoading(false);
           }
         );
-
         setLoading(false);
         return () => {
           authListener.subscription.unsubscribe();
@@ -45,25 +58,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     };
-
     checkUser();
   }, []);
+
+  // Bloqueio global para premium vencido
+  useEffect(() => {
+    if (
+      user &&
+      planoStatus === 'premium' &&
+      vencimento &&
+      new Date() > new Date(vencimento) &&
+      location.pathname !== '/bloqueado'
+    ) {
+      supabase.auth.signOut();
+      navigate('/bloqueado');
+      toast({
+        title: 'Acesso bloqueado',
+        description: 'Seu período de acesso expirou. Entre em contato com o administrador para renovação.',
+        variant: 'destructive',
+      });
+    }
+  }, [user, planoStatus, vencimento, location.pathname, navigate, toast]);
 
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
-      
+
+      // Buscar status e vencimento do usuário
+      const { data: usuario, error: userError } = await supabase
+        .from('usuarios')
+        .select('status, vencimento')
+        .eq('email', email)
+        .single();
+      if (!userError && usuario) {
+        if (typeof usuario.status === 'string' && usuario.status.trim().toLowerCase() === 'premium') {
+          if (usuario.vencimento && new Date() > new Date(usuario.vencimento)) {
+            navigate('/bloqueado');
+            toast({
+              title: 'Acesso bloqueado',
+              description: 'Seu período de acesso expirou. Entre em contato com o administrador para renovação.',
+              variant: 'destructive',
+            });
+            return;
+          }
+        }
+      }
+
       toast({
         title: "Login realizado com sucesso",
         description: "Bem-vindo de volta ao Minha Grana!",
       });
-      
       navigate('/dashboard');
     } catch (error: any) {
       toast({

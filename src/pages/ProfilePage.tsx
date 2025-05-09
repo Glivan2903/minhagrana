@@ -27,6 +27,8 @@ const ProfilePage = () => {
     status: '',
     aceite_termos: false,
     data_aceite_termos: '',
+    data_compra: '',
+    vencimento: '',
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -57,6 +59,8 @@ const ProfilePage = () => {
           status: data.status,
           aceite_termos: data.aceite_termos,
           data_aceite_termos: data.data_aceite_termos,
+          data_compra: data.data_compra,
+          vencimento: data.vencimento,
         });
       } catch (error: any) {
         toast({
@@ -336,7 +340,14 @@ const ProfilePage = () => {
               <span className="font-medium">Plano atual:</span>
               <span className="font-medium">{profile.status}</span>
             </div>
-            
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">Data de compra:</span>
+              <span className="text-sm">{profile.data_compra ? new Date(profile.data_compra).toLocaleDateString('pt-BR') : '-'}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-500">Vencimento:</span>
+              <span className="text-sm">{profile.vencimento ? new Date(profile.vencimento).toLocaleDateString('pt-BR') : '-'}</span>
+            </div>
             <Button 
               className="w-full bg-amber-500 hover:bg-amber-600"
               onClick={() => {
