@@ -30,7 +30,11 @@ export const Header: React.FC<HeaderProps> = ({ username, onLogout }) => {
 
   return (
     <header className="border-b bg-white px-6 py-3">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex flex-col">
+          <span className="text-lg font-bold">Olá, {username}</span>
+          <span className="text-sm text-muted-foreground">Bem-vindo ao seu painel financeiro</span>
+        </div>
         <div className="flex items-center gap-4">
           <Dialog open={notifOpen} onOpenChange={setNotifOpen}>
             <Button variant="ghost" size="icon" className="relative" onClick={() => setNotifOpen(true)}>

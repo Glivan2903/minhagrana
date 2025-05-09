@@ -146,22 +146,22 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="w-full min-h-screen pl-2 pr-4 py-6 space-y-6 flex flex-col">
+    <div className="w-full min-h-screen pl-2 pr-4 py-4 space-y-4 flex flex-col">
       <div>
         <h1 className="text-3xl font-bold">Perfil</h1>
         <p className="text-muted-foreground">Gerencie suas informações pessoais e preferências</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Informações da Conta */}
-        <Card>
-          <CardHeader>
+        <Card className="p-2">
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <User size={18} />
               Informações da Conta
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center pb-6">
+          <CardContent className="flex flex-col items-center pb-4">
             <Avatar className="h-24 w-24 mb-4">
               <AvatarFallback className="text-2xl bg-minhagrana-primary text-white">
                 {userInitials}
@@ -201,14 +201,14 @@ const ProfilePage = () => {
         </Card>
         
         {/* Atualizar Informações */}
-        <Card>
-          <CardHeader>
+        <Card className="p-2">
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <User size={18} />
               Atualizar Informações
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pb-4">
             <form onSubmit={handleProfileUpdate}>
               <div className="space-y-4">
                 <div>
@@ -264,14 +264,14 @@ const ProfilePage = () => {
         </Card>
         
         {/* Alterar Senha */}
-        <Card>
-          <CardHeader>
+        <Card className="p-2">
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <Lock size={18} />
               Alterar Senha
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pb-4">
             <form onSubmit={handlePasswordChange}>
               <div className="space-y-4">
                 <div>
@@ -324,14 +324,14 @@ const ProfilePage = () => {
         </Card>
         
         {/* Faturamento */}
-        <Card>
-          <CardHeader>
+        <Card className="p-2">
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <CreditCard size={18} />
               Faturamento
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="font-medium">Plano atual:</span>
               <span className="font-medium">{profile.status}</span>
